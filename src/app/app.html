@@ -1,9 +1,11 @@
 <nav class="navbar">
-  <h1>Jira Clone App</h1>
-  <!-- laogout -->
+  <h1>NgRx Jira Clone</h1>
+  <!-- logout -->
+   <button class="logout-button" *ngIf="(isLoggedIn$ | async)" (click)="onLogout()" >
+    Logout
+   </button>
 </nav>
 
 <main>
   <router-outlet></router-outlet>
 </main>
-

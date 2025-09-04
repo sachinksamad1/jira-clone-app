@@ -10,17 +10,22 @@ import { provideRouterStore, routerReducer } from '@ngrx/router-store';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { environment } from './environments/env';
+import { environment } from '../environments/env';
 import { localStorageSync } from 'ngrx-store-localstorage';
 import { authReducer} from './store/auth/auth.reducer';
 import { AuthEffects } from './store/auth/auth.effects';
+import { tasksReducer } from './store/tasks/tasks.reducer';
+import { usersReducers } from './store/users/users.reducer';
+import { commentsReducer } from './store/comments/comments.reducer';
+import { TasksEffects } from './store/tasks/tasks.effects';
+import { UsersEffects } from './store/users/users.effects';
+import { CommentsEffects } from './store/comments/comments.effects';
 
-export function localStorageSyncReducer(reducer: ActionReducer<any>) {
-  return localStorageSync({ 
-    keys: ['auth'], 
-    rehydrate: true 
-  })
-  (reducer);
+export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
+  return localStorageSync({
+    keys : ['auth'],
+    rehydrate : true,
+  })(reducer);
 }
 
 const metaReducers = [localStorageSyncReducer];
@@ -33,17 +38,19 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes), provideClientHydration(withEventReplay()),
     provideStore({
       router: routerReducer,
-      auth: authReducer
+      auth: authReducer,
+      tasks: tasksReducer,
+      users: usersReducers,
+      comments: commentsReducer
     }, { 
       metaReducers 
     }),
-    provideEffects([AuthEffects]),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-    provideRouterStore(), provideFirebaseApp(() => 
+    provideEffects([AuthEffects, TasksEffects, UsersEffects, CommentsEffects]),
+    provideStoreDevtools(),
+    provideRouterStore(), 
+    provideFirebaseApp(() => 
       initializeApp(environment.firebaseConfig)), // firebase configuration using envirnoments
-      provideAuth(() => 
-        getAuth()), 
-      provideFirestore(() => 
-        getFirestore())
+      provideAuth(() => getAuth()), 
+      provideFirestore(() => getFirestore())
 ]
 };
