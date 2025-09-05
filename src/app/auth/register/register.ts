@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { map, Observable } from 'rxjs';
-import { selectAuthState } from '../../store/auth/auth.selectors';
-import * as AuthActions from '../../store/auth/auth.actions';
-import { CommonEngine } from '@angular/ssr/node';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { AuthActions } from '../../store/auth/auth.actions';
+import { selectAuthState } from '../../store/auth/auth.selectors';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-register',
@@ -24,11 +24,7 @@ export class Register {
   isLoading$: Observable<boolean> = this.store.select(selectAuthState).pipe(map(s => s.isLoading));
   error$: Observable<string | null> = this.store.select(selectAuthState).pipe(map(s => s.error));
 
-  register(name: string, email: string, password: string) {
-    this.store.dispatch(AuthActions.register({ name, email, password }));
-  }
-
-  onSubmit() {
+  onSubmit(): void {
     this.store.dispatch(AuthActions.register({
       name: this.name,
       email: this.email,
